@@ -79,7 +79,7 @@ We include the latest version of Liblinear (2.47 for now) in the
 `train.c` to include the computing time
 (the [train2.c](liblinear/train2.c) file).
 
-Then we compare Liblinear and **ReHLine-SVM** on a large data with
+Then we compare Liblinear and **ReHLine-SVM** on a large data set with
 5,000,000 observations and 18 features. To reproduce the experiment,
 download the [SUSY](https://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary/SUSY.xz) data,
 and extract it into the `data` directory.
