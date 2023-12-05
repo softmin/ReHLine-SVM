@@ -33,7 +33,7 @@ rehline::rehline_svm(res, X, y, C, max_iter, tol, shrink, verbose, trace_freq);
 ```
 
 The variable `X` is a matrix of dimension $n\times d$, and `y`
-is a length-$n$ vector taking values of 1 or -1.
+is a vector of length $n$ taking values of 1 or -1.
 For better performance, `X` is suggested to be a row-majored matrix
 in Eigen, whose type can be defined as follows:
 
