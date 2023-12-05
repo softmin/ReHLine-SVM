@@ -207,6 +207,10 @@ as a special case. ReHLine can do much more, including the smoothed SVM,
 Huber regression, quantile regression, etc. Please see the
 [ReHLine project page](https://rehline.github.io/) for details.
 
+### License
+
+**ReHLine-SVM** is open source under the MIT license.
+
 ### Citation
 
 Please consider to cite our article if you find **ReHLine-SVM** or
