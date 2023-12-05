@@ -1,0 +1,10 @@
+Eigen/*
+*.model
+
+# Binary files
+*.o
+*.a
+*.so
+*.dll
+*.exe
+.DS_Store
