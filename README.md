@@ -7,10 +7,10 @@ the fastest linear SVM solver. Its only dependency is the
 **ReHLine-SVM** solves the following optimization problem:
 
 $$
-  \min_{\mathbf{\beta} \in \mathbb{R}^d} \frac{C}{n} \sum_{i=1}^n ( 1 - y_i \mathbf{\beta}^\intercal \mathbf{x}_i )_+ + \frac{1}{2} \| \mathbf{\beta} \|_2^2,
+  \min_{\mathbf{\beta} \in \mathbb{R}^d} \frac{C}{n} \sum_{i=1}^n ( 1 - y_i \mathbf{\beta}^\intercal \mathbf{x}_ i )_+ + \frac{1}{2} \Vert \mathbf{\beta} \Vert_2^2,
 $$
 
-where $\mathbf{x}_i \in \mathbb{R}^d$ is a feature vector, $y_i \in \{-1, 1\}$ is a binary label, and $(x)_+=\max\{x,0\}$.
+where $\mathbf{x}_ i \in \mathbb{R}^d$ is a feature vector, $y_i \in \\{-1, 1\\}$ is a binary label, and $(x)_+=\max\\{x,0\\}$.
 
 ### Quick Start
 
