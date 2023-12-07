@@ -3,8 +3,9 @@
 
 #include <vector>
 #include <numeric>
-#include <iostream>
+#include <random>
 #include <type_traits>
+#include <iostream>
 #include <Eigen/Core>
 
 namespace rehline {
@@ -12,15 +13,23 @@ namespace rehline {
 // ========================= Internal utility functions ========================= //
 namespace internal {
 
-// Used in random_shuffle(), generating a random integer from {0, 1, ..., i-1}
-// The random number generator (RNG) does not need a high precision,
-// so we do not attempt to use C++11 RNGs such as std::mt19937
-// Instead, the old std::rand() is used here
+// A simple wrapper of existing RNG
 template <typename Index = int>
-Index rand_less_than(Index i)
+class SimpleRNG
 {
-    return Index(std::rand() % i);
-}
+private:
+    std::mt19937 m_rng;
+
+public:
+    // Set seed
+    void seed(Index seed) { m_rng.seed(seed); }
+
+    // Used in random_shuffle(), generating a random integer from {0, 1, ..., i-1}
+    Index operator()(Index i)
+    {
+        return Index(m_rng() % i);
+    }
+};
 
 // Randomly shuffle a vector
 //
@@ -118,6 +127,9 @@ private:
         Eigen::Ref<const Matrix>,
         Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>
     >::type;
+
+    // RNG
+    internal::SimpleRNG<Index> m_rng;
 
     // Dimensions
     const Index m_n;
@@ -354,7 +366,7 @@ private:
             return;
 
         // Permutation
-        internal::random_shuffle(fv_set.begin(), fv_set.end(), internal::rand_less_than<Index>);
+        internal::random_shuffle(fv_set.begin(), fv_set.end(), m_rng);
         // New free variable set
         std::vector<Index> new_set;
         new_set.reserve(fv_set.size());
@@ -414,7 +426,7 @@ private:
             return;
 
         // Permutation
-        internal::random_shuffle(fv_set.begin(), fv_set.end(), internal::rand_less_than<Index>);
+        internal::random_shuffle(fv_set.begin(), fv_set.end(), m_rng);
         // New free variable set
         std::vector<std::pair<Index, Index>> new_set;
         new_set.reserve(fv_set.size());
@@ -480,7 +492,7 @@ private:
             return;
 
         // Permutation
-        internal::random_shuffle(fv_set.begin(), fv_set.end(), internal::rand_less_than<Index>);
+        internal::random_shuffle(fv_set.begin(), fv_set.end(), m_rng);
         // New free variable set
         std::vector<std::pair<Index, Index>> new_set;
         new_set.reserve(fv_set.size());
@@ -578,6 +590,8 @@ public:
         // Set primal variable based on duals
         set_primal();
     }
+
+    inline void set_seed(Index seed) { m_rng.seed(seed); }
 
     inline Index solve_vanilla(
         std::vector<Scalar>& dual_objfns, std::vector<Scalar>& primal_objfns,
@@ -751,7 +765,7 @@ void rehline_solver(
     Index niter;
     if (shrink > 0)
     {
-        std::srand(shrink);
+        solver.set_seed(shrink);
         niter = solver.solve(dual_objfns, primal_objfns, max_iter, tol, verbose, trace_freq, cout);
     } else {
         niter = solver.solve_vanilla(dual_objfns, primal_objfns, max_iter, tol, verbose, trace_freq, cout);
