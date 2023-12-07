@@ -1,7 +1,8 @@
 ## ReHLine-SVM
 
 **ReHLine-SVM** is a tiny and header-only C++ library aiming to be
-the fastest linear SVM solver. Its only dependency is the
+the **fastest** linear SVM solver. The whole library is a single
+header file [rehline.h](rehline.h), and its only dependency is the
 [Eigen](https://eigen.tuxfamily.org) library, which is also header-only.
 
 **ReHLine-SVM** solves the following optimization problem:
