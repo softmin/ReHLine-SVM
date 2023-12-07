@@ -196,7 +196,7 @@ The meaning of each argument is as follows:
 - `tol`: (input) a scalar giving the convergence tolerance.
 - `shrink`: (input) if it is a positive integer, then a shrinking scheme is used to accelerate the algorithm, and the value of this argument is used as a random seed; otherwise, the vanilla algorithm is used.
 - `verbose`: (input) level of verbosity, taking values of 0, 1, or 2.
-- `trace_freq` (input) trace objective functions values every `trace_freq` iterations; only works if `verbose > 0`.
+- `trace_freq` (input) trace objective function values every `trace_freq` iterations; only works if `verbose > 0`.
 - `cout`: the output stream object, default to be `std::cout`.
 
 ### Extensions
