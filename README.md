@@ -54,18 +54,18 @@ g++ -std=c++11 -O2 -I. example1.cpp -o example1
 Running `example1` gives the following possible output:
 
 ```
-niter = 118
+niter = 100
 beta =
-  0.588211
- 0.0826256
- 0.0709005
-  0.339442
- -0.414267
- 0.0141788
-  0.525987
- -0.176368
--0.0932384
-  0.282286
+-0.284341
+ 0.680663
+-0.273076
+-0.134658
+-0.165271
+0.0601155
+0.0697878
+ 0.150636
+ 0.343303
+ 0.226581
 ```
 
 ### Benchmark
@@ -93,26 +93,27 @@ gcc -O3 -fPIC -c liblinear/blas/ddot.c
 gcc -O3 -fPIC -c liblinear/blas/dnrm2.c
 gcc -O3 -fPIC -c liblinear/blas/dscal.c
 ar rcs blas.a daxpy.o ddot.o dnrm2.o dscal.o
-g++ -std=c++11 -O2 -fPIC -c liblinear/newton.cpp
-g++ -std=c++11 -O2 -fPIC -c liblinear/linear.cpp
+g++ -std=c++11 -O2 -fPIC -DNDEBUG -c liblinear/newton.cpp
+g++ -std=c++11 -O2 -fPIC -DNDEBUG -c liblinear/linear.cpp
 gcc -O3 -fPIC -c liblinear/train2.c
-g++ -std=c++11 -O2 train2.o newton.o linear.o blas.a -o liblinear
+g++ -std=c++11 -O2 train2.o newton.o linear.o blas.a -o run_liblinear
 ```
 
 And then run the program:
 
 ```bash
-liblinear -s 3 -c 2e-5 -e 0.001 data/SUSY
+./run_liblinear -s 3 -c 2e-5 -e 1e-5 data/SUSY
 ```
 
 It will generate a model file named `SUSY.model`, and the output
-shows that its model solving takes 132.875 seconds.
+shows that its model solving takes 11.58 seconds.
 
-```................*..*.*
-optimization finished, #iter = 192
+```
+......**
+optimization finished, #iter = 64
 Objective value = -58.018530
-nSV = 3122349
-Computation time: 132.875000 seconds.
+nSV = 3122272
+Computation time: 11.583774 seconds.
 ```
 
 Then we use **ReHLine-SVM** to compute it
@@ -121,61 +122,59 @@ and compare its result with
 that of Liblinear:
 
 ```bash
-g++ -std=c++11 -O2 -I. example2.cpp -o rehline
-rehline data/SUSY SUSY.model
+g++ -std=c++11 -O2 -I. -DNDEBUG example2.cpp -o run_rehline
+./run_rehline data/SUSY SUSY.model
 ```
 
-The output shows that **ReHLine-SVM** only takes about 30 seconds
+The output shows that **ReHLine-SVM** only takes about 4.7 seconds
 while achieving a smaller objective function value (ReHline-SVM 58.072/Liblinear 58.1859).
 
 ```
-Iter 0, dual_objfn = -45.7976, primal_objfn = 66.6771, xi_diff = 0, beta_diff = 21.8617
-Iter 100, dual_objfn = -57.9117, primal_objfn = 58.1417, xi_diff = 0, beta_diff = 0.00384903
-*** Iter 115, free variables converge; next test on all variables
-*** Iter 136, free variables converge; next test on all variables
-*** Iter 138, free variables converge; next test on all variables
-Computation time: 29.8851 seconds
+Iter 0, dual_objfn = -45.7806, primal_objfn = 66.6884, xi_diff = 0, beta_diff = 21.8619
+*** Iter 20, free variables converge; next test on all variables
+*** Iter 23, free variables converge; next test on all variables
+Computation time: 4.71375 seconds
 
 beta =
-     0.94276
- 0.000308242
--0.000653667
-   -0.124244
- 0.000451755
- 0.000165797
-     2.06511
-  0.00179583
-    0.216882
-  -0.0914909
-   -0.560838
-    0.695612
-    -1.25535
-   -0.304982
-   -0.579794
-   -0.136381
-   -0.906826
+    0.942592
+ 0.000327085
+-0.000597487
+   -0.124389
+ 0.000449019
+ 0.000219511
+     2.06514
+  0.00175777
+    0.217093
+  -0.0921886
+   -0.560916
+    0.695706
+    -1.25522
+   -0.304249
+   -0.579766
+   -0.135974
+   -0.907076
            0
 objfn = 58.072
 
 beta(liblinear) =
-    0.907439
- 0.000313963
--0.000614302
-  -0.0973794
- 0.000376164
- 0.000217329
-      2.0428
-  0.00178343
-    0.229951
-  -0.0821376
-   -0.560714
-    0.669999
+    0.907424
+ 0.000313113
+-0.000610905
+  -0.0973855
+ 0.000380076
+ 0.000225803
+     2.04279
+  0.00178176
+    0.229943
+  -0.0821463
+   -0.560707
+    0.669993
     -1.31528
-   -0.297058
-     -0.5694
-   -0.118384
-   -0.896794
-    0.252937
+   -0.297069
+   -0.569391
+   -0.118391
+   -0.896777
+    0.252936
 objfn(liblinear) = 58.1859
 ```
 
