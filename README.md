@@ -190,7 +190,7 @@ The meaning of each argument is as follows:
 
 - `result`: (output) an object containing the optimization results.
 - `X`: (input) an $n\times d$ data matrix, preferred to be row-majored.
-- `y`: (input) a length-$n$ response vector taking values of 1 or -1.
+- `y`: (input) a response vector of length $n$ taking values of 1 or -1.
 - `C`: (input) a scalar standing for the cost parameter.
 - `max_iter`: (input) an integer representing the maximum number of iterations.
 - `tol`: (input) a scalar giving the convergence tolerance.
