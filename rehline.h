@@ -459,7 +459,7 @@ private:
             max_pg = std::max(max_pg, pg);
             min_pg = std::min(min_pg, pg);
             // Compute new lambda_li
-            const Scalar candid = lambda_li - g_li / m_gli_denom(l, i);;
+            const Scalar candid = lambda_li - g_li / m_gli_denom(l, i);
             const Scalar newl = std::max(Scalar(0), std::min(Scalar(1), candid));
             // Update Lambda and beta
             m_Lambda(l, i) = newl;
