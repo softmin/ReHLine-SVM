@@ -126,7 +126,7 @@ g++ -std=c++11 -O2 -I. -DNDEBUG example2.cpp -o run_rehline
 ./run_rehline data/SUSY SUSY.model
 ```
 
-The output shows that **ReHLine-SVM** only takes about 3.3 seconds
+The output shows that **ReHLine-SVM** only takes about 3.35 seconds
 while achieving the same objective function value 58.0185.
 
 ```
