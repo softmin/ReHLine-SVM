@@ -106,14 +106,14 @@ And then run the program:
 ```
 
 It will generate a model file named `SUSY.model`, and the output
-shows that its model solving takes 11.58 seconds.
+shows that its model solving takes 9.57 seconds.
 
 ```
 ......**
 optimization finished, #iter = 64
 Objective value = -58.018530
 nSV = 3122272
-Computation time: 11.583774 seconds.
+Computation time: 9.574224 seconds.
 ```
 
 Then we use **ReHLine-SVM** to compute it
@@ -126,35 +126,34 @@ g++ -std=c++11 -O2 -I. -DNDEBUG example2.cpp -o run_rehline
 ./run_rehline data/SUSY SUSY.model
 ```
 
-The output shows that **ReHLine-SVM** only takes about 4.7 seconds
-while achieving a smaller objective function value (ReHline-SVM 58.072/Liblinear 58.1859).
+The output shows that **ReHLine-SVM** only takes about 3.3 seconds
+while achieving the same objective function value 58.0185.
 
 ```
-Iter 0, dual_objfn = -45.7806, primal_objfn = 66.6884, xi_diff = 0, beta_diff = 21.8619
-*** Iter 20, free variables converge; next test on all variables
-*** Iter 23, free variables converge; next test on all variables
-Computation time: 4.71375 seconds
+Iter 0, dual_objfn = -45.7268, primal_objfn = 66.7088, xi_diff = 0, beta_diff = 21.9285
+*** Iter 21, free variables converge; next test on all variables
+Computation time: 3.35343 seconds
 
 beta =
-    0.942592
- 0.000327085
--0.000597487
-   -0.124389
- 0.000449019
- 0.000219511
-     2.06514
-  0.00175777
-    0.217093
-  -0.0921886
-   -0.560916
-    0.695706
-    -1.25522
-   -0.304249
-   -0.579766
-   -0.135974
-   -0.907076
-           0
-objfn = 58.072
+    0.907429
+  0.00030992
+-0.000610212
+  -0.0973955
+ 0.000383808
+ 0.000224872
+     2.04278
+  0.00178147
+    0.229938
+  -0.0821459
+   -0.560706
+    0.669993
+    -1.31528
+   -0.297077
+   -0.569394
+   -0.118377
+   -0.896771
+    0.252943
+objfn = 58.0185
 
 beta(liblinear) =
     0.907424
@@ -175,7 +174,7 @@ beta(liblinear) =
    -0.118391
    -0.896777
     0.252936
-objfn(liblinear) = 58.1859
+objfn(liblinear) = 58.0185
 ```
 
 ### Library Use
