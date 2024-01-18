@@ -77,6 +77,15 @@ void read_data(
                 space = end;
                 end = line.find(' ', space + 1);
             }
+            // Explicitly read the last feature
+            std::size_t colon = line.find(':', space + 1);
+            if (colon != std::string::npos)
+            {
+                int j = std::stoi(line.substr(space + 1, colon - space - 1));
+                Scalar val = std::stod(line.substr(colon + 1, std::string::npos));
+                x(i, j - 1) = val;
+            }
+
             i++;
         }
         file.close();
