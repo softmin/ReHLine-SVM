@@ -371,10 +371,16 @@ private:
         std::vector<Index> new_set;
         new_set.reserve(fv_set.size());
 
-        // Compute shrinking threshold
+        // Compute shrinking threshold ub
+        // ub is kept unchanged in each outer iteration,
+        // and is determined by the maximum PG in the previous outer iteration (i.e., max_pg)
+        // If the input max_pg is zero or negative, let ub be Inf (do not shrink)
+        // This happens when:
+        //     (1) max_pg is initialized to be zero in the first iteration
+        //     (2) max_pg is negative, thus not meaningful
         constexpr Scalar Inf = std::numeric_limits<Scalar>::infinity();
         const Scalar ub = (max_pg > Scalar(0)) ? max_pg : Inf;
-        // Compute minimum and maximum projected gradient (PG) for this round
+        // Compute minimum and maximum projected gradient (PG) for this round (outer iteration)
         min_pg = Inf;
         max_pg = -Inf;
         for (auto k: fv_set)
@@ -431,7 +437,8 @@ private:
         std::vector<std::pair<Index, Index>> new_set;
         new_set.reserve(fv_set.size());
 
-        // Compute shrinking thresholds
+        // Compute shrinking thresholds lb and ub
+        // More details explained in update_xi_beta()
         constexpr Scalar Inf = std::numeric_limits<Scalar>::infinity();
         const Scalar lb = (min_pg < Scalar(0)) ? min_pg : -Inf;
         const Scalar ub = (max_pg > Scalar(0)) ? max_pg : Inf;
@@ -497,7 +504,8 @@ private:
         std::vector<std::pair<Index, Index>> new_set;
         new_set.reserve(fv_set.size());
 
-        // Compute shrinking thresholds
+        // Compute shrinking thresholds lb and ub
+        // More details explained in update_xi_beta()
         constexpr Scalar Inf = std::numeric_limits<Scalar>::infinity();
         const Scalar lb = (min_pg < Scalar(0)) ? min_pg : -Inf;
         const Scalar ub = (max_pg > Scalar(0)) ? max_pg : Inf;
@@ -648,10 +656,12 @@ public:
         internal::reset_fv_set(m_fv_relu, m_L, m_n);
         internal::reset_fv_set(m_fv_rehu, m_H, m_n);
 
-        // Shrinking thresholds
-        constexpr Scalar Inf = std::numeric_limits<Scalar>::infinity();
-        Scalar xi_min_pg = Inf, lambda_min_pg = Inf, gamma_min_pg = Inf;
-        Scalar xi_max_pg = -Inf, lambda_max_pg = -Inf, gamma_max_pg = -Inf;
+        // Minimum and maximum projected gradients of dual variables in each outer iteration
+        // These variables will be updated in update_*_beta() functions below
+        // If some dual variables are not used, the corresponding pg variables
+        // will always be zero, so that the related tests in pg_conv below return true values
+        Scalar xi_min_pg = Scalar(0), lambda_min_pg = Scalar(0), gamma_min_pg = Scalar(0);
+        Scalar xi_max_pg = Scalar(0), lambda_max_pg = Scalar(0), gamma_max_pg = Scalar(0);
 
         // Main iterations
         Index i = 0;
@@ -720,8 +730,8 @@ public:
                 internal::reset_fv_set(m_fv_feas, m_K);
                 internal::reset_fv_set(m_fv_relu, m_L, m_n);
                 internal::reset_fv_set(m_fv_rehu, m_H, m_n);
-                xi_min_pg = lambda_min_pg = gamma_min_pg = Inf;
-                xi_max_pg = lambda_max_pg = gamma_max_pg = -Inf;
+                xi_min_pg = lambda_min_pg = gamma_min_pg = Scalar(0);
+                xi_max_pg = lambda_max_pg = gamma_max_pg = Scalar(0);
                 // Also recompute beta to improve precision
                 // set_primal();
                 continue;
