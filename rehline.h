@@ -599,6 +599,57 @@ public:
         set_primal();
     }
 
+    // Warm start: set dual variables to be the given ones
+    inline void warmstart_params(ConstRefVec xi_ws, ConstRefMat Lambda_ws, ConstRefMat Gamma_ws)
+    {
+        // Warmstart parameters
+        if (m_K > 0)
+        {
+            // Check shape of warmstart parameters
+            if (xi_ws.size() != m_K) {
+                throw std::invalid_argument("xi_ws must have size K");
+            }
+            // Check values of warmstart parameters
+            if ((xi_ws.array() < 0).any()) {
+                throw std::invalid_argument("xi_ws must be non-negative");
+            }
+            m_xi = xi_ws;
+        }
+
+
+        if (m_L > 0)
+        {
+            // Check shape of warmstart parameters
+            if (Lambda_ws.rows() != m_L || Lambda_ws.cols() != m_n) {
+                throw std::invalid_argument("Lambda_ws must have shape (L, n)");
+            }
+            // Check values of warmstart parameters
+            if ((Lambda_ws.array() < 0).any() || (Lambda_ws.array() > 1).any()) {
+                throw std::invalid_argument("Lambda_ws must be in [0, 1]");
+            }
+            m_Lambda = Lambda_ws;
+        }
+
+
+        if (m_H > 0)
+        {
+            // Check shape of warmstart parameters
+            if (Gamma_ws.rows() != m_H || Gamma_ws.cols() != m_n) {
+                throw std::invalid_argument("Gamma_ws must have shape (H, n)");
+            }
+            // Check values of warmstart parameters
+            if ((Gamma_ws.array() < 0).any() || (Gamma_ws.array() > m_Tau.array()).any()) {
+                throw std::invalid_argument("Gamma_ws must be in [0, tau_hi]");
+            }
+            m_Gamma = Gamma_ws;
+        }
+
+        // Set primal variable based on duals
+        set_primal();
+    }
+
+
+
     inline void set_seed(Index seed) { m_rng.seed(seed); }
 
     inline Index solve_vanilla(
@@ -749,6 +800,7 @@ public:
     Matrix& get_Gamma_ref() { return m_Gamma; }
 };
 
+
 // Main solver interface
 // template <typename Matrix = Eigen::MatrixXd, typename Index = int>
 template <typename DerivedMat, typename DerivedVec, typename Index = int>
@@ -767,7 +819,17 @@ void rehline_solver(
     ReHLineSolver<typename DerivedMat::PlainObject, Index> solver(X, U, V, S, T, Tau, A, b);
 
     // Initialize parameters
-    solver.init_params();
+    try {
+        // Warm start parameters: if result contains warm start parameters then warm start
+        if (result.xi.size() > 0 || result.Lambda.size() > 0 || result.Gamma.size() > 0) {
+            solver.warmstart_params(result.xi, result.Lambda, result.Gamma);
+        } else {
+            solver.init_params();
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Warning: warmstart_params failed, using default initialization. Error: " << e.what() << std::endl;
+        solver.init_params();
+    }
 
     // Main iterations
     std::vector<typename DerivedMat::Scalar> dual_objfns;
