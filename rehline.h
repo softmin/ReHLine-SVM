@@ -606,49 +606,53 @@ public:
         if (m_K > 0)
         {
             // Check shape of warmstart parameters
-            if (xi_ws.size() != m_K) {
+            if (xi_ws.size() != m_K)
+            {
                 throw std::invalid_argument("xi_ws must have size K");
             }
             // Check values of warmstart parameters
-            if ((xi_ws.array() < 0).any()) {
+            if ((xi_ws.array() < Scalar(0)).any())
+            {
                 throw std::invalid_argument("xi_ws must be non-negative");
             }
-            m_xi = xi_ws;
+            m_xi.noalias() = xi_ws;
         }
 
 
         if (m_L > 0)
         {
             // Check shape of warmstart parameters
-            if (Lambda_ws.rows() != m_L || Lambda_ws.cols() != m_n) {
+            if (Lambda_ws.rows() != m_L || Lambda_ws.cols() != m_n)
+            {
                 throw std::invalid_argument("Lambda_ws must have shape (L, n)");
             }
             // Check values of warmstart parameters
-            if ((Lambda_ws.array() < 0).any() || (Lambda_ws.array() > 1).any()) {
+            if ((Lambda_ws.array() < Scalar(0)).any() || (Lambda_ws.array() > Scalar(1)).any())
+            {
                 throw std::invalid_argument("Lambda_ws must be in [0, 1]");
             }
-            m_Lambda = Lambda_ws;
+            m_Lambda.noalias() = Lambda_ws;
         }
 
 
         if (m_H > 0)
         {
             // Check shape of warmstart parameters
-            if (Gamma_ws.rows() != m_H || Gamma_ws.cols() != m_n) {
+            if (Gamma_ws.rows() != m_H || Gamma_ws.cols() != m_n)
+            {
                 throw std::invalid_argument("Gamma_ws must have shape (H, n)");
             }
             // Check values of warmstart parameters
-            if ((Gamma_ws.array() < 0).any() || (Gamma_ws.array() > m_Tau.array()).any()) {
+            if ((Gamma_ws.array() < Scalar(0)).any() || (Gamma_ws.array() > m_Tau.array()).any())
+            {
                 throw std::invalid_argument("Gamma_ws must be in [0, tau_hi]");
             }
-            m_Gamma = Gamma_ws;
+            m_Gamma.noalias() = Gamma_ws;
         }
 
         // Set primal variable based on duals
         set_primal();
     }
-
-
 
     inline void set_seed(Index seed) { m_rng.seed(seed); }
 
@@ -819,15 +823,17 @@ void rehline_solver(
     ReHLineSolver<typename DerivedMat::PlainObject, Index> solver(X, U, V, S, T, Tau, A, b);
 
     // Initialize parameters
-    try {
+    try
+    {
         // Warm start parameters: if result contains warm start parameters then warm start
-        if (result.xi.size() > 0 || result.Lambda.size() > 0 || result.Gamma.size() > 0) {
+        if (result.xi.size() > 0 || result.Lambda.size() > 0 || result.Gamma.size() > 0)
+        {
             solver.warmstart_params(result.xi, result.Lambda, result.Gamma);
         } else {
             solver.init_params();
         }
     } catch (const std::exception& e) {
-        std::cerr << "Warning: warmstart_params failed, using default initialization. Error: " << e.what() << std::endl;
+        cout << "Warning: warmstart_params failed, using default initialization.\nReason: " << e.what() << std::endl;
         solver.init_params();
     }
 
